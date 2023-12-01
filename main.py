@@ -10,6 +10,18 @@ from typing import Self
 ## (c) Peter Norvig, 2010-16; See http://norvig.com/lispy.html
 
 
+################ Utils
+
+
+def trap[T](fn: Callable[[], T]) -> tuple[T, None] | tuple[None, Exception]:
+    "Run fn, return (result, None) unless exception, then (None, exception)."
+    try:
+        return (fn(), None)
+
+    except Exception as e:
+        return (None, e)
+
+
 ################ Types
 
 
@@ -59,14 +71,15 @@ def read_from_tokens(tokens: list[str]) -> Value:
 
 def atom(token: str) -> Any:
     "Numbers become numbers; every other token is a symbol."
-    try:
-        return int(token)
+    ret, err = trap(lambda: int(token))
+    if err is None:
+        return ret
 
-    except ValueError:
-        try:
-            return float(token)
-        except ValueError:
-            return Symbol(token)
+    ret, err = trap(lambda: float(token))
+    if err is None:
+        return ret
+
+    return Symbol(token)
 
 
 ################ Environments
