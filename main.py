@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-import operator as op
+import operator
 
 ################ Lispy: Scheme Interpreter in Python
 ## (c) Peter Norvig, 2010-16; See http://norvig.com/lispy.html
@@ -70,31 +70,31 @@ def standard_env():
     env.update(vars(math))  # sin, cos, sqrt, pi, ...
     env.update(
         {
-            "+": op.add,
-            "-": op.sub,
-            "*": op.mul,
-            "/": op.truediv,
-            ">": op.gt,
-            "<": op.lt,
-            ">=": op.ge,
-            "<=": op.le,
-            "=": op.eq,
+            "+": operator.add,
+            "-": operator.sub,
+            "*": operator.mul,
+            "/": operator.truediv,
+            ">": operator.gt,
+            "<": operator.lt,
+            ">=": operator.ge,
+            "<=": operator.le,
+            "=": operator.eq,
             "abs": abs,
-            "append": op.add,
-            "apply": apply,
+            "append": operator.add,
+            # "apply": apply,
             "begin": lambda *x: x[-1],
             "car": lambda x: x[0],
             "cdr": lambda x: x[1:],
             "cons": lambda x, y: [x] + y,
-            "eq?": op.is_,
-            "equal?": op.eq,
+            "eq?": operator.is_,
+            "equal?": operator.eq,
             "length": len,
             "list": lambda *x: list(x),
             "list?": lambda x: isinstance(x, list),
             "map": map,
             "max": max,
             "min": min,
-            "not": op.not_,
+            "not": operator.not_,
             "null?": lambda x: x == [],
             "number?": lambda x: isinstance(x, Number),
             "procedure?": callable,
@@ -126,7 +126,7 @@ global_env = standard_env()
 def repl(prompt="lis.py> "):
     "A prompt-read-eval-print loop."
     while True:
-        val = eval(parse(raw_input(prompt)))
+        val = eval(parse(input(prompt)))
         if val is not None:
             print(lispstr(val))
 
@@ -189,3 +189,7 @@ def eval(x, env=global_env):
         proc = eval(x[0], env)
         args = [eval(exp, env) for exp in x[1:]]
         return proc(*args)
+
+
+if __name__ == "__main__":
+    repl()
