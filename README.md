@@ -2,6 +2,8 @@
 
 Lispy from [(How to Write a (Lisp) Interpreter (in Python))](https://norvig.com/lispy.html) with some modernizations based on Python 3.12.
 
+This Lispy is based on [lis.py](https://norvig.com/lis.py) at 2023-12-01.
+
 
 # Usage
 
