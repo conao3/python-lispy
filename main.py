@@ -167,8 +167,7 @@ def lispstr(exp: Value) -> str:
     if isinstance(exp, list):
         return "(" + " ".join(map(lispstr, exp)) + ")"
 
-    else:
-        return str(exp)
+    return str(exp)
 
 
 ################ Procedures
