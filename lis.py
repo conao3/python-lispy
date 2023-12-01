@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 import math
 import operator
@@ -165,11 +166,18 @@ global_env = standard_env()
 ################ Interaction: A REPL
 
 
-def repl(prompt: str = "lis.py> ") -> NoReturn:
+def repl(prompt: str = "lis.py> ") -> None:
     "A prompt-read-eval-print loop."
     while True:
-        val = eval(parse(input(prompt)))
-        print(lispstr(val))
+        try:
+            val = eval(parse(input(prompt)))
+            print(lispstr(val))
+
+        except (KeyboardInterrupt, EOFError):
+            break
+
+        except Exception as e:
+            logging.exception(e)
 
 
 def lispstr(exp: Value) -> str:
