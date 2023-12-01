@@ -17,7 +17,8 @@ class Symbol(str):
     "A Lisp Symbol is implemented as a Python str"
 
 
-type Value = int | float | Symbol | list[Value] | Callable[..., Value]
+type Value = int | float | Symbol | list[Value] | Callable[..., Value] | Procedure
+
 
 ################ Parsing: parse, tokenize, and read_from_tokens
 
@@ -117,8 +118,8 @@ class Env(dict[str, Any]):
 
     def __init__(
         self,
-        parms: list[str] = [],
-        args: list[Value] = [],
+        parms: tuple[str, ...] = (),
+        args: tuple[Value, ...] = (),
         outer: Env | None = None,
     ):
         self.update(zip(parms, args))
@@ -145,8 +146,7 @@ def repl(prompt: str = "lis.py> "):
     "A prompt-read-eval-print loop."
     while True:
         val = eval(parse(input(prompt)))
-        if val is not None:
-            print(lispstr(val))
+        print(lispstr(val))
 
 
 def lispstr(exp: Value) -> str:
@@ -167,14 +167,14 @@ class Procedure:
     def __init__(self, parms: Any, body: Any, env: Env):
         self.parms, self.body, self.env = parms, body, env
 
-    def __call__(self, *args: Value):
+    def __call__(self, *args: Value) -> Value:
         return eval(self.body, Env(self.parms, args, self.env))
 
 
 ################ eval
 
 
-def eval(x: list[Value], env: Env = global_env) -> Value:
+def eval(x: Value, env: Env = global_env) -> Value:
     "Evaluate an expression in an environment."
     if isinstance(x, Symbol):  # variable reference
         return env.find(x)[x]
@@ -204,6 +204,8 @@ def eval(x: list[Value], env: Env = global_env) -> Value:
         return Procedure(parms, body, env)
 
     proc = eval(x[0], env)
+    assert callable(proc), f"{x[0]} is not callable"
+
     args = [eval(exp, env) for exp in x[1:]]
     return proc(*args)
 
