@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import math
 import operator
+from collections.abc import Callable
+from typing import Any
+from typing import Self
 
 ################ Lispy: Scheme Interpreter in Python
 ## (c) Peter Norvig, 2010-16; See http://norvig.com/lispy.html
@@ -10,25 +13,26 @@ import operator
 ################ Types
 
 
-Symbol = str  # A Lisp Symbol is implemented as a Python str
-List = list  # A Lisp List is implemented as a Python list
-Number = (int, float)  # A Lisp Number is implemented as a Python int or float
+class Symbol(str):
+    "A Lisp Symbol is implemented as a Python str"
 
+
+type Value = int | float | Symbol | list[Value] | Callable[..., Value]
 
 ################ Parsing: parse, tokenize, and read_from_tokens
 
 
-def parse(program):
+def parse(program: str) -> Value:
     "Read a Scheme expression from a string."
     return read_from_tokens(tokenize(program))
 
 
-def tokenize(s):
+def tokenize(s: str) -> list[str]:
     "Convert a string into a list of tokens."
     return s.replace("(", " ( ").replace(")", " ) ").split()
 
 
-def read_from_tokens(tokens):
+def read_from_tokens(tokens: list[str]) -> Value:
     "Read an expression from a sequence of tokens."
     if len(tokens) == 0:
         raise SyntaxError("unexpected EOF while reading")
@@ -36,11 +40,14 @@ def read_from_tokens(tokens):
     token = tokens.pop(0)
 
     if "(" == token:
-        L = []
+        lst: list[Value] = []
+
         while tokens[0] != ")":
-            L.append(read_from_tokens(tokens))
+            lst.append(read_from_tokens(tokens))
+
         tokens.pop(0)  # pop off ')'
-        return L
+
+        return lst
 
     elif ")" == token:
         raise SyntaxError("unexpected )")
@@ -49,7 +56,7 @@ def read_from_tokens(tokens):
         return atom(token)
 
 
-def atom(token):
+def atom(token: str) -> Any:
     "Numbers become numbers; every other token is a symbol."
     try:
         return int(token)
@@ -96,7 +103,7 @@ def standard_env():
             "min": min,
             "not": operator.not_,
             "null?": lambda x: x == [],
-            "number?": lambda x: isinstance(x, Number),
+            "number?": lambda x: isinstance(x, int, float),
             "procedure?": callable,
             "round": round,
             "symbol?": lambda x: isinstance(x, Symbol),
@@ -105,16 +112,27 @@ def standard_env():
     return env
 
 
-class Env(dict):
+class Env(dict[str, Any]):
     "An environment: a dict of {'var':val} pairs, with an outer Env."
 
-    def __init__(self, parms=(), args=(), outer=None):
+    def __init__(
+        self,
+        parms: list[str] = [],
+        args: list[Value] = [],
+        outer: Env | None = None,
+    ):
         self.update(zip(parms, args))
         self.outer = outer
 
-    def find(self, var):
+    def find(self, var: Self) -> Self:
         "Find the innermost Env where var appears."
-        return self if (var in self) else self.outer.find(var)
+        if var in self:
+            return self
+
+        if self.outer is None:
+            raise KeyError(var)
+
+        return self.outer.find(var)
 
 
 global_env = standard_env()
@@ -123,7 +141,7 @@ global_env = standard_env()
 ################ Interaction: A REPL
 
 
-def repl(prompt="lis.py> "):
+def repl(prompt: str = "lis.py> "):
     "A prompt-read-eval-print loop."
     while True:
         val = eval(parse(input(prompt)))
@@ -131,9 +149,9 @@ def repl(prompt="lis.py> "):
             print(lispstr(val))
 
 
-def lispstr(exp):
+def lispstr(exp: Value) -> str:
     "Convert a Python object back into a Lisp-readable string."
-    if isinstance(exp, List):
+    if isinstance(exp, list):
         return "(" + " ".join(map(lispstr, exp)) + ")"
 
     else:
@@ -146,22 +164,22 @@ def lispstr(exp):
 class Procedure:
     "A user-defined Scheme procedure."
 
-    def __init__(self, parms, body, env):
+    def __init__(self, parms: Any, body: Any, env: Env):
         self.parms, self.body, self.env = parms, body, env
 
-    def __call__(self, *args):
+    def __call__(self, *args: Value):
         return eval(self.body, Env(self.parms, args, self.env))
 
 
 ################ eval
 
 
-def eval(x, env=global_env):
+def eval(x: list[Value], env: Env = global_env) -> Value:
     "Evaluate an expression in an environment."
     if isinstance(x, Symbol):  # variable reference
         return env.find(x)[x]
 
-    elif not isinstance(x, List):  # constant literal
+    elif not isinstance(x, list):  # constant literal
         return x
 
     elif x[0] == "quote":  # (quote exp)
@@ -185,10 +203,9 @@ def eval(x, env=global_env):
         (_, parms, body) = x
         return Procedure(parms, body, env)
 
-    else:  # (proc arg...)
-        proc = eval(x[0], env)
-        args = [eval(exp, env) for exp in x[1:]]
-        return proc(*args)
+    proc = eval(x[0], env)
+    args = [eval(exp, env) for exp in x[1:]]
+    return proc(*args)
 
 
 if __name__ == "__main__":
