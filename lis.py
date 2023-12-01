@@ -77,8 +77,7 @@ def read_from_tokens(tokens: list[str]) -> Value:
     elif ")" == token:
         raise SyntaxError("unexpected )")
 
-    else:
-        return atom(token)
+    return atom(token)
 
 
 def atom(token: str) -> Any:
