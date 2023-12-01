@@ -29,6 +29,16 @@ class Symbol(str):
     "A Lisp Symbol is implemented as a Python str"
 
 
+class Procedure:
+    "A user-defined Scheme procedure."
+
+    def __init__(self, parms: Any, body: Any, env: Env):
+        self.parms, self.body, self.env = parms, body, env
+
+    def __call__(self, *args: Value) -> Value:
+        return eval(self.body, Env(self.parms, args, self.env))
+
+
 type Value = int | float | Symbol | list[Value] | Callable[..., Value] | Procedure
 
 
@@ -168,19 +178,6 @@ def lispstr(exp: Value) -> str:
         return "(" + " ".join(map(lispstr, exp)) + ")"
 
     return str(exp)
-
-
-################ Procedures
-
-
-class Procedure:
-    "A user-defined Scheme procedure."
-
-    def __init__(self, parms: Any, body: Any, env: Env):
-        self.parms, self.body, self.env = parms, body, env
-
-    def __call__(self, *args: Value) -> Value:
-        return eval(self.body, Env(self.parms, args, self.env))
 
 
 ################ eval
