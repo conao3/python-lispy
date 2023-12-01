@@ -113,7 +113,7 @@ def standard_env() -> Env:
             "=": operator.eq,
             "abs": abs,
             "append": operator.add,
-            # "apply": apply,
+            "apply": lambda proc, args: proc(*args),
             "begin": lambda *x: x[-1],
             "car": lambda x: x[0],
             "cdr": lambda x: x[1:],
