@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import operator
 from collections.abc import Callable
-from typing import Any
+from typing import Any, NoReturn
 from typing import Self
 
 ################ Lispy: Scheme Interpreter in Python
@@ -95,7 +95,7 @@ def atom(token: str) -> Any:
 ################ Environments
 
 
-def standard_env():
+def standard_env() -> Env:
     "An environment with some Scheme standard procedures."
     env = Env()
     env.update(vars(math))  # sin, cos, sqrt, pi, ...
@@ -165,7 +165,7 @@ global_env = standard_env()
 ################ Interaction: A REPL
 
 
-def repl(prompt: str = "lis.py> "):
+def repl(prompt: str = "lis.py> ") -> NoReturn:
     "A prompt-read-eval-print loop."
     while True:
         val = eval(parse(input(prompt)))
