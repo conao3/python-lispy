@@ -138,7 +138,7 @@ class Env(dict[str, Any]):
         self.update(zip(parms, args))
         self.outer = outer
 
-    def find(self, var: Self) -> Self:
+    def find(self, var: str) -> Self:
         "Find the innermost Env where var appears."
         if var in self:
             return self
@@ -206,10 +206,12 @@ def eval(x: Value, env: Env = global_env) -> Value:
 
     elif x[0] == "define":  # (define var exp)
         (_, var, exp) = x
+        assert isinstance(var, Symbol), "can only define symbols"
         env[var] = eval(exp, env)
 
     elif x[0] == "set!":  # (set! var exp)
         (_, var, exp) = x
+        assert isinstance(var, Symbol), "can only set! symbols"
         env.find(var)[var] = eval(exp, env)
 
     elif x[0] == "lambda":  # (lambda (var...) body)
