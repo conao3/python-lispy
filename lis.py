@@ -1,10 +1,10 @@
 from __future__ import annotations
-import logging
 
+import logging
 import math
 import operator
 from collections.abc import Callable
-from typing import Any, NoReturn
+from typing import Any
 from typing import Self
 
 ################ Lispy: Scheme Interpreter in Python
