@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import operator
+import readline  # type: ignore
 from collections.abc import Callable
 from typing import Any
 from typing import Self
@@ -123,7 +124,7 @@ def standard_env() -> Env:
             "length": len,
             "list": lambda *x: list(x),
             "list?": lambda x: isinstance(x, list),
-            "map": map,
+            "map": lambda *x: list(map(*x)),
             "max": max,
             "min": min,
             "not": operator.not_,
@@ -211,12 +212,16 @@ def eval(x: Value, env: Env = global_env) -> Value:
     elif x[0] == "define":  # (define var exp)
         (_, var, exp) = x
         assert isinstance(var, Symbol), "can only define symbols"
-        env[var] = eval(exp, env)
+        val = eval(exp, env)
+        env[var] = val
+        return val
 
     elif x[0] == "set!":  # (set! var exp)
         (_, var, exp) = x
         assert isinstance(var, Symbol), "can only set! symbols"
-        env.find(var)[var] = eval(exp, env)
+        val = eval(exp, env)
+        env.find(var)[var] = val
+        return val
 
     elif x[0] == "lambda":  # (lambda (var...) body)
         (_, parms, body) = x
