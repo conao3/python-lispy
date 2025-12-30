@@ -1,18 +1,24 @@
 # Lispy
 
-Lispy from [(How to Write a (Lisp) Interpreter (in Python))](https://norvig.com/lispy.html) with some modernizations based on Python 3.12.
+A Lisp interpreter implemented in Python, based on Peter Norvig's classic tutorial [How to Write a (Lisp) Interpreter (in Python)](https://norvig.com/lispy.html). This implementation has been modernized for Python 3.12.
 
-This Lispy is based on [lis.py](https://norvig.com/lis.py) at 2023-12-01.
+The source is derived from [lis.py](https://norvig.com/lis.py) (as of 2023-12-01).
 
-
-# Usage
+## Installation
 
 ```bash
 poetry install
+```
+
+## Usage
+
+Start the interactive REPL:
+
+```bash
 poetry run python lis.py
 ```
 
-# Sample
+## Examples
 
 ```lisp
 $ poetry run python lis.py
@@ -64,21 +70,18 @@ lis.py> (map fib (range 0 10))
 (1 1 2 3 5 8 13 21 34 55)
 lis.py> (map fib (range 0 20))
 (1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 6765)
-lis.py> C-c
 ```
 
+## Development
 
-# Contributing
-
-Before commit, install pre-commit hooks:
+Install pre-commit hooks before making changes:
 
 ```bash
 poetry run pre-commit install
 ```
 
+## License
 
-# License
+The original article does not specify a license. Please contact us if there are any concerns.
 
-Unfortunately, we could not find the licence in the original article.
-Please let me know if there is a problem.
-As for the changes I have made, they are available under Apache-2.0.
+All modifications made in this repository are released under the Apache-2.0 license.
