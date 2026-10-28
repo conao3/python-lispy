@@ -200,30 +200,30 @@ def eval(x: Value, env: Env = global_env) -> Value:
         return x
 
     elif x[0] == "quote":  # (quote exp)
-        (_, exp) = x
+        _, exp = x
         return exp
 
     elif x[0] == "if":  # (if test conseq alt)
-        (_, test, conseq, alt) = x
+        _, test, conseq, alt = x
         exp = conseq if eval(test, env) else alt
         return eval(exp, env)
 
     elif x[0] == "define":  # (define var exp)
-        (_, var, exp) = x
+        _, var, exp = x
         assert isinstance(var, Symbol), "can only define symbols"
         val = eval(exp, env)
         env[var] = val
         return val
 
     elif x[0] == "set!":  # (set! var exp)
-        (_, var, exp) = x
+        _, var, exp = x
         assert isinstance(var, Symbol), "can only set! symbols"
         val = eval(exp, env)
         env.find(var)[var] = val
         return val
 
     elif x[0] == "lambda":  # (lambda (var...) body)
-        (_, parms, body) = x
+        _, parms, body = x
         return Procedure(parms, body, env)
 
     proc = eval(x[0], env)
