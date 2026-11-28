@@ -1,4 +1,12 @@
-# Lispy
+<p align="center"><img src="docs/assets/banner.png" alt="Lispy: A small Lisp interpreter written in Python for learning how Lisp works" width="880"></p>
+
+<p align="center"><strong>A small Lisp interpreter written in Python for learning how Lisp works</strong></p>
+
+<p align="center"><a href="LICENSE"><img src="https://img.shields.io/github/license/conao3/python-lispy" alt="License"></a> <a href="https://github.com/conao3/python-lispy/stargazers"><img src="https://img.shields.io/github/stars/conao3/python-lispy?style=flat" alt="GitHub stars"></a></p>
+
+<p align="center"><a href="#installation">Installation</a> | <a href="#usage">Usage</a> | <a href="#examples">Examples</a> | <a href="#license">License</a></p>
+
+<h1>Lispy</h1>
 
 A Lisp interpreter implemented in Python, based on Peter Norvig's classic tutorial [How to Write a (Lisp) Interpreter (in Python)](https://norvig.com/lispy.html). This implementation has been modernized for Python 3.12.
 
